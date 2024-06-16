@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="h-screen w-screen bg-zinc-500" >
+<div class="w-screen flex items-center py-[1.8vw]  gap-[25vw] " >
+ <a href="/home">
+    <i class="ri-arrow-left-line px-[4vw]   text-white text-2xl font-500"></i>
+ </a>
+    <h1 class="text-white text-center px-[15vw] text-2xl font-500"  >Wishlist </h1>
+</div>
+<div class="cards-container w-screen h-[40vw] px-[1vw] py-[2vw] flex flex-wrap overflow-x-hidden gap-[1vw] " >
+    <%  user.wishlist.forEach((wish) =>{ %>
+    <div class="card  w-[15vw] h-[17vw] border-1-white border" >
+        <div class="w-full h-[12vw] p-2 " >
+           
+                <img class="w-full h-full object-contain   object-contain " src="/productimg/<%=wish.img %>" alt=""/>
+           
+        </div>
+        <div class="w-full h-[5vw]  flex flex-col items-center ">
+<div class=" w-full flex items-center justify-between px-[2vw]" >
+    <h6 class="text-white text-lg font-400"><%=wish.name %></h6>
+    <a href="/likes/remove/<%=wish.id %>"> <i class="ri-heart-fill font-600  text-lg text-red-400 cursor-pointer"></i></a>
+
+    
+</div>
+<div class=" w-full flex items-center justify-between px-[2vw]" >
+    <h5 class=" text-white font-200 ">₹<%=wish.price %></h5>
+    <a href="/cart/add/<%= wish.id %>">
+    <div class="w-[6vw] h-[1.8vw] bg-red-200 rounded flex items-center justify-center my-[0.5vw] cursor-pointer active:scale-[0.98] " > <h4 class="">Add to cart</h4></div>
+
+    </a>
+</div>
+
+        </div>
+    </div>
+    <% })%>
+</div>
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+    rel="stylesheet"
+/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<style>
+  .vr::-webkit-scrollbar{
+display: none;
+  }
+</style>
+<body>
+  <div class="w-screen h-screen bg-zinc-500" >
+    <div class="w-screen flex items-center py-[1.8vw]  gap-[25vw] " >
+      
+         <h1 class="text-white text-center px-[15vw] text-2xl font-500"  >Cart</h1>
+     </div>
+<div class=" w-screen h-[40vw]  " >
+  <div class="w-[100%] h-[10px ] flex items-center justify-around "  >
+    <h1>Product</h1>
+    <h1>quntity</h1>
+    <h1>Amount</h1>
+</div> 
+<br> <hr>
+<div class="vr flex  flex-col gap-6 mt-3 cartContainer w-[100%] h-[75%] pt-2 pb-2   overflow-x-auto ">
+<!-- <div class ></div> -->
+<% user.cart.forEach((cart) => {  %>
+
+<div class="cartBoxes flex items-center justify-around pr-12 " >
+<div class="flex items-center gap-2">
+ <img class="w-[120px] h-[120px] object-contain " src="/productimg/<%=cart.pro.img %>" alt="">
+ <h1><%=cart.name %></h1>
+</div>
+<div class="flex items-center gap-2 " > 
+  <a href="/cart/remove/<%=cart.id %>">  <h1 class="text-2xl" >-</h1></a>
+  <h2 class="text-2xl" ><%=cart.quantity %></h2>
+ <a href="/cart/addMore/<%=cart.id %>">   <h1 class="text-2xl" >+</h1></a>
+</div>
+ <h1>₹<%=cart.pro.price %></h1>
+ </div>
+ <% })%>
+
+</div >
+<div class="absolute bottom-1">
+  <div class="amountBar flex items-center gap-[25vw] justify-around">
+    <h1>Total Amount</h1>
+    <h1>₹<%= sum %></h1>
+    </div>
+    <div class="w-screen  flex  items-center justify-center pt-[2vw]" >
+    <a href="/book">Buy now</a>
+    
+    
+    </div>
+</div>
+</div>
+
+  </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+
+    
+</body>
+</html>

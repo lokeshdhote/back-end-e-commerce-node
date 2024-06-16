@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <style>
+    .bx{
+      overflow: hidden;
+      overflow-x: auto;
+    }::-webkit-scrollbar{
+      display: none;
+    }
+  </style>
+  <body>
+    <div class="main w-screen h-screen overflow-hidden">
+      <div
+        class="nav flex items-center justify-between gap-12 pl-5 pr-5 w-full h-12 bg-gray-400"
+      >
+        <div>
+          <h1 class="text-xl text-400 pl-4">E-commerce</h1>
+        </div>
+        <div class="flex gap-12 pr-12">
+          <a class="text-lg text-400" href="/home">Home</a>
+          <a class="text-lg text-400" href="/wishlist">wishlist</a>
+          <a class="text-lg text-400" href="/cart">cart</a>
+          <a class="text-lg text-400" href="/profile">Profile</a>
+        </div>
+      </div>
+      <div
+        class="bg-zinc-500 w-screen h-[3.5vw] flex items-center justify-center pt-5"
+      >
+        <div
+          class="h-[2vw] w-[80%] flex bg-white pl-[4vw] r rounded items-center gap-5"
+        >
+          <i class="ri-search-line"> </i>
+          <input class="outline-0" type="text" placeholder="search" />
+        </div>
+      </div>
+      <div class="w-full h-[90%] bg-zinc-500 overflow-x-auto">
+        <div class="productContainer flex gap-3 pt-10 p-4 flex-wrap ">
+          <% product.forEach((product) =>{ %>
+
+          <div class="product w-[15vw] h-[18vw] border border-1-white">
+<div class="bx w-full flex  h-[78.5%] p-2"> 
+            
+  <img class="w-full h-full object-contain " src="/productimg/<%=product.img %>" alt=""/>
+  
+          
+             
+            </div>            
+           
+            <div class="flex items-center gap-3 justify-between px-[1vw] py-1">
+              <h1 class="text-lg text-400 text-white text-center">
+                <%= product.name %>
+              </h1>
+              <h3 class="text-center text-sm text-white">
+                ₹<%= product.price %>
+              </h3>
+            </div>
+            <div class="flex items-center justify-between px-[3vw]">
+              <a
+                class="w-20 text-400 text-black text-lg  text-center bg-green-400 cursor-pointer active:scale-[0.98] rounded hover:font-[500] "
+                href="/cart/add/<%= product.id %>"
+        >Buy</a
+              >
+
+              <% if(user.wishlist.indexOf(product._id) === -1 ){ %>
+                <a href="/likes/<%=product.id %>" class="like    text-lg  cursor-pointer">
+                  <i class="ri-heart-line"></i
+                ></a>
+  
+                <%}else{%>
+                <a href="/likes/<%=product.id %>" class="like   text-lg text-red-400 cursor-pointer  ">
+                  <i class="ri-heart-fill"></i
+                ></a>
+  
+                <%}%>
+<!-- 
+              <a href="#" class="like">
+                <i class="ri-heart-fill"></i
+              ></a> -->
+
+            </div>
+          </div>
+       
+          <% })%>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

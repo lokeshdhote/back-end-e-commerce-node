@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+    rel="stylesheet"
+/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="main  w-screen h-screen bg-zinc-700">
+<div class=" w-[100%] h-[100%] flex flex-col items-center  justify-center ">
+    <div class="text-zinc-500 text-xl capitalize cursor-pointer " >
+        <button onclick="openregister()"  class="  capitalize  ">register</button> 
+        /
+      <button onclick="openlogin()" class=" capitalize">logIn</button></div>
+<div class="inputBox w-[420px] h-[420px] flex-col flex items-center justify-center "  >
+<form action="/register"  method="post" class=" register flex flex-col gap-5  items-center justify-center "  >
+
+
+    <input  class="w-60  h-8 bg-zinc-500 text-white outline-0 rounded pl-5 capitalize placeholder:text-white 
+    " type="text" name="username" placeholder="username" >
+    <input   class="w-60  h-8 bg-zinc-500 text-white outline-0 rounded pl-5 capitalize placeholder:text-white "  type="email" name="email" placeholder="email" >
+  
+    <input class="w-60  h-8 bg-zinc-500 text-white outline-0 rounded pl-5 capitalize placeholder:text-white "  type="text" placeholder="category (Buyer/ Seller)" name="category" >
+    <textarea class=" w-[15rem] h-20 text-white  outline-none  bg-zinc-500 placeholder:text-white capitalize  pl-5 " placeholder="adress" name="adress" id="adress"></textarea>
+
+    <input  class="w-60  h-8 bg-zinc-500  text-white outline-0 rounded pl-5 capitalize  placeholder:text-white"  type="password" name="password" placeholder="password" >
+  <input  class="w-40 h-8 bg-blue-300 rounded drop-shadow-lg shadow-black   active:scale-[0.89] hover:cursor-pointer" type="submit">
+  
+  </form>
+  <form action="/login"  method="post" class=" login hidden flex-col gap-5  items-center justify-center    " >
+  
+  
+    <input  class="w-60  h-8 bg-zinc-500 text-white outline-0 rounded pl-5 capitalize placeholder:text-white " type="text" name="username" placeholder="username" >
+    <input  class="w-60  h-8 bg-zinc-500  text-white outline-0 rounded pl-5 capitalize  placeholder:text-white"  type="password" name="password" placeholder="password" >
+  <input  class="w-40 h-8 bg-blue-300 rounded drop-shadow-lg shadow-black   active:scale-[0.89] hover:cursor-pointer" type="submit">
+  
+  </form>
+</div>
+</div>
+
+
+    </div>
+    <script>
+                function openlogin(){
+       
+       document.querySelector(".register").style.display="none";
+document.querySelector(".login").style.display="flex";
+
+
+     }
+     function openregister(){
+      
+       document.querySelector(".login").style.display="none";
+document.querySelector(".register").style.display="flex";  
+}
+
+    </script>
+</body>
+</html>

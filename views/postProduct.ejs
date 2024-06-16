@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+    rel="stylesheet"
+/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="w-screen h-screen bg-zinc-500 overflow-hidden">
+        <h2 class="text-white text-center py-[3vw]  text-2xl font-[400]" >Create a product</h2>
+
+ <div class="flex flex-col items-center justify-center h-fit w-screen py-[6vw]  gap-20">
+       
+
+       <div class=" items-center flex flex-col gap-[1vw]">
+        <form  class=" items-center flex flex-col gap-[1vw]" action="/pro" method="POST" enctype="multipart/form-data">
+            <div>
+                <label for="price">Price:</label>
+                <input type="text" id="price" name="price" >
+            </div>
+            <div>
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" >
+            </div>
+            <div>
+                <label for="rating">Rating:</label>
+                <input type="text" id="rating" name="rating" >
+            </div>
+            <div>
+                <label for="categoryGender">Category Gender:</label>
+                <input type="text" id="categoryGender" name="categoryGender" >
+            </div>
+            <div>
+                <label for="brand">Brand:</label>
+                <input type="text" id="brand" name="brand" >
+            </div>
+            <div>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" ></textarea>
+            </div>
+            <div>
+                <label for="specification">Specification:</label>
+                <textarea id="specification" name="specification" ></textarea>
+            </div>
+            <div>
+                <label for="availability">Availability:</label>
+                <input type="text" id="availability" name="availability" >
+            </div>
+            <div>
+                <label for="category">Category:</label>
+                <input type="text" id="category" name="category" >
+            </div>
+            <div>
+                <label for="img">Upload Image:</label>
+                <input type="file" id="img" name="img" accept="image/*" >
+            </div>
+            <div>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+        <!-- <form  class="flex flex-col gap-5"  id="productform" multiple enctype="multipart/form-data" action="/pro" method="post">
+            <div class="productimg flex-col flex items-center justify-center w-[15vw] h-[15vw] border border-1-white">
+                <img  class="ig h-fit w-fit object-contain"  src="" alt=""  >
+        
+                <h2 id="h2" >select photos </h2>  
+                  
+                </div>
+            <input class="hidden"  type="file" name="img" id="productImage">
+            <input class=" w-[20rem]   h-10 outline-none  bg-zinc-400 placeholder:text-white capitalize  pl-5 " type="text" placeholder="Product name" name="name" >
+            <input class=" w-[20rem]   h-10 outline-none  bg-zinc-400 placeholder:text-white capitalize  pl-5 " type="text" placeholder="Product price" name="price" >
+            <input  class=" w-[20rem]  hover:font-[500] cursor-pointer active:scale-[0.98]  h-10 outline-none  bg-zinc-400 placeholder:text-white capitalize  pl-5 " type="submit" value="submit">
+        </form> -->
+       </div>
+ </div>
+    <!-- <img class=" h-40 w-40 object-cover " src="" alt=""> -->
+    
+
+    </div>
+    <script>
+      
+        function productIMG(){
+          document.querySelector(".productimg").addEventListener("click",function(){
+              document.querySelector("#productImage").click()
+document.querySelector("#h2").style.display ="none"
+              const prod =  document.querySelector("#productImage")
+              const ig = document.querySelector(".ig")
+              prod.addEventListener("change", function(event) {
+
+    var file = event.target.files[0];
+    var objectURL = URL.createObjectURL(file);
+    ig.src = objectURL;
+});
+             
+          })
+        
+         
+        }
+       productIMG()
+       
+      </script>
+      
+    
+</body>
+</html>

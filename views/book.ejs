@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="bg-white w-screen h-screen " >
+<div class="w-screen bg-gray-500 py-[1vw] "><h2 class="text-center text-xl ">Order</h2></div>
+<div class="w-screen py-[2vw]  px-[2vw] flex items-center gap-[2vw] ">
+    <h2 class="">Deliver to :</h2>
+    <div class="w-fit h-fit p-[2vw] gap-[1vw] flex-col border border-black ">
+      <div class="flex items-center gap-x-[4vw]" >
+        <h2><%= user.username %></h2>
+        <h3><%= user.email %></h3>
+      </div>
+        
+<p class="w-fit h-fit  "><%=user. adress %></p>
+
+    </div>
+</div>
+<% user.cart.forEach((cart) => {  %>
+
+<div class="flex items-center gap-[3vw] w-screen px-[2vw] ">
+    <div class="w-[8vw] h-[8vw] flex-col items-center flex">
+        <img class="w-full h-full object-contain" src="/productimg/<%=cart.pro.img %>" alt="">
+        <h2><%=cart.pro.name %></h2>
+    </div>
+    <h4><%=user.SUM %></h4>
+</div>
+<% })%>
+
+
+
+<div class="w-screen px-[2vw] py-[3vw]  ">
+<h3 class="text-xl font-[500] text">payment option</h3>
+<ul class="list-disc px-[2vw] py-[0.7vw]">
+    <li  >Phonepe</li>
+    <li  >Net banking </li>
+    <li  >Cash on delivery</li>
+</ul>
+</div>
+
+<div class="w-screen flex items-center justify-center">
+<button id="rzp-button1"   class="text-center text-2xl font-[400]">Pay now</button>
+
+</div>
+
+
+
+
+    </div>
+    
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+var orderId ;
+    $(document).ready(function(){
+        var settings = {
+      "url": "/create/orderId",
+      "method": "post",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({
+        "amount": "SUM"
+      }),
+    };
+    
+    //creates new orderId everytime
+    $.ajax(settings).done(function (response) {
+    console.log(response)
+      orderId=response.id;
+      console.log(orderId);
+      $("button").show();
+    
+      var options = {
+        "key": "rzp_test_KLBKFXwqmfpOaS", // Enter the Key ID generated from the Dashboard
+        "amount": "150", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "INR",
+        "name": "garvit",
+        "description": "Garvit",
+        "image": "data:image/png;base64,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",
+        "order_id": response.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        "handler": function (response){
+            // alert(response.razorpay_payment_id);
+            // alert(response.razorpay_order_id);
+            // alert(response.razorpay_signature)
+            var settings = {
+      "url": "/api/payment/verify",
+      "method": "POST",
+      "timeout": 0,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "data": JSON.stringify({response}),
+    }
+    $.ajax(settings).done(function(response){
+      if(response.signatureIsValid == 'true'){
+        window.location.href = "/success"
+    
+      }
+      else{
+        window.location.href = "/fail"
+    
+      }
+    })
+        },
+       
+        "notes": {
+            "address": "Razorpay Corporate Office"
+        },
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+            alert(response.error.code);
+            alert(response.error.description);
+            alert(response.error.source);
+            alert(response.error.step);
+            alert(response.error.reason);
+            alert(response.error.metadata.order_id);
+            alert(response.error.metadata.payment_id);
+    });
+    document.getElementById('rzp-button1').onclick = function(e){
+        rzp1.open();
+        e.preventDefault();
+    }
+    });
+    });
+</script>
+
+</body>
+</html>
