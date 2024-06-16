@@ -8,9 +8,13 @@ const expressSession = require("express-session")
 const passport = require('passport')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var cors = require("cors")
 
 // Database connection
 require("./routes/dataBase.js").connectDatabse();
+
+const allowedOrigins =["http://localhost:4000"]
+
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -29,6 +33,8 @@ app.use(expressSession({
   passport.serializeUser(usersRouter.serializeUser())
   passport.deserializeUser(usersRouter.deserializeUser())
   
+  app.use(cors({origin:allowedOrigins,credentials:true}))
+
 app.use(logger('tiny'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
