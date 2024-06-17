@@ -100,7 +100,7 @@ exports.postproductpage = catchAsyncErrors(async (req,res,next)=>{
     const product = await productModel.find({});
   console.log(product.img);
 //   res.json({ product })
-  res.render("postproduct.ejs",{ product } ); 
+  res.render("postProduct.ejs", ); 
 })
 exports.likeProductid = catchAsyncErrors(async (req,res,next)=>{
     const loggedInUser = await userModel.findOne({
@@ -130,21 +130,9 @@ exports.productpage = catchAsyncErrors(async (req,res,next)=>{
   const product = await productModel.find({});
     res.json({product})
 })
-exports.createOrderId = catchAsyncErrors(async (req,res,next)=>{
-  const user = await userModel.findOne({
-    username: req.session.passport.user,
-  })
-  var options = {
-    amount: user.SUM,  // amount in the smallest currency unit
-    currency: "INR",
-    receipt: "order_rcptid_11"
-  };
-  instance.orders.create(options, function(err, order) {
-    console.log(order);
-    return res.send(order)
-
-  });  
-})
+// exports.page = catchAsyncErrors(async (req,res,next)=>{
+    
+// })
 // exports.page = catchAsyncErrors(async (req,res,next)=>{
     
 // })
