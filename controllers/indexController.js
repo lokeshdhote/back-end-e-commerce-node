@@ -100,7 +100,7 @@ exports.postproductpage = catchAsyncErrors(async (req,res,next)=>{
     const product = await productModel.find({});
   console.log(product.img);
 //   res.json({ product })
-  res.render("postproduct.ejs", ); 
+  res.render("postProduct.ejs", ); 
 })
 exports.likeProductid = catchAsyncErrors(async (req,res,next)=>{
     const loggedInUser = await userModel.findOne({
