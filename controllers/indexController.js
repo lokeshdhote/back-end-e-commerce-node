@@ -21,7 +21,10 @@ exports.homepage = catchAsyncErrors(async (req, res, next) => {
 
 
 exports.detailpage = catchAsyncErrors(async (req, res, next) => {
-    res.render("item.ejs");
+  // console.log(req.params.id)
+const data = await productModel.findOne({_id:req.params.id})
+
+    res.json(data)
 });
 
 exports.createProductpage = catchAsyncErrors(async (req, res, next) => {

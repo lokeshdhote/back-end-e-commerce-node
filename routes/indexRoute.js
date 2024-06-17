@@ -27,7 +27,7 @@ router.get("/products", productpage);
 
 router.get("/home",isLoggedIn ,homepage);
 
-router.get("/detail", detailpage );
+router.get("/detail/:id", detailpage );
 
 
 router.get("/likes/:productId", isLoggedIn,likeProductid);
