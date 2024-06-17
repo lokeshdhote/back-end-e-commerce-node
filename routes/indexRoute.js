@@ -10,7 +10,7 @@ const product = require("../models/product");
 
 
 
-const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage } = require("../controllers/indexController.js");
+const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage, createOrderId } = require("../controllers/indexController.js");
 
 
 var instance = new Razorpay({
