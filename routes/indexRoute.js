@@ -35,7 +35,7 @@ router.get("/likes/:productId", isLoggedIn,likeProductid);
 router.get("/postproduct", isLoggedIn, postproductpage);
 
 ////// product create /////
-router.post("/pro",isLoggedIn,upload.single("img"),createProductpage);
+router.post("/pro",isLoggedIn,createProductpage);
 
 
 

@@ -18,7 +18,7 @@
        
 
        <div class=" items-center flex flex-col gap-[1vw]">
-        <form  class=" items-center flex flex-col gap-[1vw]" action="/pro" method="POST" enctype="multipart/form-data">
+        <form  class=" items-center flex flex-col gap-[1vw]" action="/pro" method="POST" >
             <div>
                 <label for="price">Price:</label>
                 <input type="text" id="price" name="price" >
@@ -56,8 +56,8 @@
                 <input type="text" id="category" name="category" >
             </div>
             <div>
-                <label for="img">Upload Image:</label>
-                <input type="file" id="img" name="img" accept="image/*" >
+                <label for="img">Upload Image Link:</label>
+                <input type="url" id="img" name="img" accept="image/*" >
             </div>
             <div>
                 <button type="submit">Submit</button>

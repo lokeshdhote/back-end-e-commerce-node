@@ -28,8 +28,7 @@ exports.createProductpage = catchAsyncErrors(async (req, res, next) => {
     const user = await userModel.findOne({
         username: req.session.passport.user,
       })
-    console.log(req.file.filename)
-    console.log(req.body);
+   
   
       const product = await productModel.create({
         price: req.body.price,
@@ -41,7 +40,7 @@ exports.createProductpage = catchAsyncErrors(async (req, res, next) => {
         specification : req.body.specification,
         availability : req.body.availability,
         category : req.body.category,
-        img: req.file.filename
+        img: req.body.img
       });
       product.user = user._id;
       user.product.push(product._id);
@@ -128,7 +127,7 @@ exports.likeProductid = catchAsyncErrors(async (req,res,next)=>{
 })
 exports.productpage = catchAsyncErrors(async (req,res,next)=>{
   const product = await productModel.find({});
-    res.json({product})
+    res.json(product)
 })
 exports.createOrderId = catchAsyncErrors(async (req,res,next)=>{
   const user = await userModel.findOne({
