@@ -16,6 +16,7 @@ const { generatedErrors } = require("./middleWares/errors.js");
 require("./models/dataBase.js").connectDatabse();
 
 
+const allowedOrigins =["http://localhost:5173"]
 
 
 
@@ -36,7 +37,8 @@ app.use(expressSession({
   passport.serializeUser(usersRouter.serializeUser())
   passport.deserializeUser(usersRouter.deserializeUser())
   
-
+  
+  app.use(cors({origin:allowedOrigins,credentials:true})) 
 
 app.use(logger('tiny'));
 app.use(express.json());

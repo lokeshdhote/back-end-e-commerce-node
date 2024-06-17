@@ -10,7 +10,7 @@ const product = require("../models/product");
 
 
 
-const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid } = require("../controllers/indexController.js");
+const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage } = require("../controllers/indexController.js");
 
 
 var instance = new Razorpay({
@@ -22,6 +22,7 @@ passport.use(new localStrategy(userModel.authenticate()));
 
 /* GET home page. */
 router.get("/", indexpage);
+router.get("/products", productpage);
 
 
 router.get("/home",isLoggedIn ,homepage);

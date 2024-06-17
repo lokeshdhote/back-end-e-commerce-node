@@ -126,6 +126,13 @@ exports.likeProductid = catchAsyncErrors(async (req,res,next)=>{
       // res.status(200).json(user)
       res.redirect("/home");
 })
+exports.productpage = catchAsyncErrors(async (req,res,next)=>{
+  const product = await productModel.find({});
+    res.json({product})
+})
+// exports.page = catchAsyncErrors(async (req,res,next)=>{
+    
+// })
 // exports.page = catchAsyncErrors(async (req,res,next)=>{
     
 // })
