@@ -1,12 +1,17 @@
 var express = require("express");
 var router = express.Router();
-const userModel = require("./users");
+const userModel = require("../models/users");
 var Razorpay = require('razorpay')
-const productModel = require("./product");
+const productModel = require("../models/product");
 const upload = require("./multer");
 const passport = require("passport");
 const localStrategy = require("passport-local");
-const product = require("./product");
+const product = require("../models/product");
+
+
+
+const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid } = require("../controllers/indexController.js");
+
 
 var instance = new Razorpay({
   key_id: process.env.key_Id,
@@ -16,90 +21,21 @@ var instance = new Razorpay({
 passport.use(new localStrategy(userModel.authenticate()));
 
 /* GET home page. */
-router.get("/", function (req, res, next) {
-  res.render("index");
-});
-router.get("/products",async function(req,res,next){
-  const product = await productModel.find()
-  res.json(product)
-
-})
-
-router.get("/home",isLoggedIn ,async function (req, res, next) {
-  const user = await userModel.findOne({
-    username: req.session.passport.user,
-  });
-
-  const product = await productModel.find({});
-// res.json(product)
-res.render("home",{product,user})
+router.get("/", indexpage);
 
 
-});
-router.get("/item", function (req, res, next) {
-  res.render("item.ejs");
-});
+router.get("/home",isLoggedIn ,homepage);
+
+router.get("/detail", detailpage );
 
 
-router.get("/likes/:productId", isLoggedIn, async function (req, res, next) {
-  const loggedInUser = await userModel.findOne({
-    username: req.session.passport.user,
-  });
+router.get("/likes/:productId", isLoggedIn,likeProductid);
 
-  const product = await productModel.findOne({ _id: req.params.productId });
+router.get("/postproduct", isLoggedIn, postproductpage);
 
-  if (loggedInUser.wishlist.indexOf(product._id) === -1) {
-    loggedInUser.wishlist.push(product._id);
-  } else {
-    let index = loggedInUser.wishlist.indexOf(product._id);
-    loggedInUser.wishlist.splice(index, 1);
-  }
-
-  await loggedInUser.save();
-  const user = await userModel
-    .findOne({
-      username: req.session.passport.user,
-    })
-    .populate("wishlist");
-
-  // res.status(200).json(user)
-  res.redirect("/home");
-});
-
-router.get("/postproduct", isLoggedIn, async function (req, res, next) {
-  const product = await productModel.find({});
-  console.log(product.img);
-  res.render("postproduct.ejs", { product });
-});
 ////// product create /////
-router.post("/pro",isLoggedIn,upload.single("img"), async function (req, res, next) {
-  const user = await userModel.findOne({
-      username: req.session.passport.user,
-    })
-  console.log(req.file.filename)
-  console.log(req.body);
+router.post("/pro",isLoggedIn,upload.single("img"),createProductpage);
 
-    const product = await productModel.create({
-      price: req.body.price,
-      title: req.body.title,
-      rating : req.body.rating,
-      categoryGender:req.body.categoryGender,
-      brand : req.body.brand,
-      description : req.body.description,
-      specification : req.body.specification,
-      availability : req.body.availability,
-      category : req.body.category,
-      img: req.file.filename
-    });
-    product.user = user._id;
-    user.product.push(product._id);
-
-    await user.save();
-    await product.save();
-
-    res.redirect("/home");
-  }
-);
 router.post('/create/orderId', async function(req,res){
   const user = await userModel.findOne({
     username: req.session.passport.user,
@@ -137,18 +73,7 @@ router.get("/success",function(req,res){
 router.get("/fail",function(req,res){
   res.render("fail")
 })
-router.get("/book",isLoggedIn , async function(req ,res,next){
-  
-  const user = await userModel.findOne({
-    username: req.session.passport.user,
-  }).populate({
-    path: "cart.pro",
-    
-  })
-
-  const product = await productModel.find({});
-  res.render("book.ejs",{user, product})
-})
+router.get("/book",isLoggedIn , bookpage)
 router.get("/cart", isLoggedIn, async function (req, res, next) {
   
   const user = await userModel.findOne({
@@ -228,44 +153,11 @@ router.get(
   }
 );
 
-router.get("/wishlist", isLoggedIn, async function (req, res, next) {
-  const user = await userModel.findOne({
-      username: req.session.passport.user,
-    }).populate("wishlist");
-  const product = await productModel.find({});
+router.get("/wishlist", isLoggedIn, Wishlistpage);
 
-  res.render("wishlist.ejs", {user,product });
-});
+router.get("/likes/remove/:wishId",isLoggedIn,removeLikeid);
 
-router.get(
-  "/likes/remove/:wishId",
-  isLoggedIn,
-  async function (req, res, next) {
-    // res.send(req.params.wishId)
-
-    const loggedInUser = await userModel.findOne({
-      username: req.session.passport.user,
-    });
-
-    const product = await productModel.findOne({ _id: req.params.wishId });
-
-    let index = loggedInUser.wishlist.indexOf(product._id);
-    loggedInUser.wishlist.splice(index, 1);
-    await loggedInUser.save();
-
-    loggedInUser.populate("wishlist");
-    res.redirect("/wishlist");
-  
-  }
-);
-
-router.get("/profile", isLoggedIn, async function (req, res, next) {
-  const user = await userModel.findOne({
-    username: req.session.passport.user,
-  });
-// res.send(user)
-  res.render("profile.ejs", { user });
-});
+router.get("/profile", isLoggedIn,profilepage );
 
 // router.post(
 //   "/prouploads",
