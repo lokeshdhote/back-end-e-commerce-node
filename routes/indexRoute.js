@@ -10,7 +10,7 @@ const product = require("../models/product");
 
 
 
-const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage } = require("../controllers/indexController.js");
+const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage, createOrderId } = require("../controllers/indexController.js");
 
 
 var instance = new Razorpay({
@@ -37,21 +37,9 @@ router.get("/postproduct", isLoggedIn, postproductpage);
 ////// product create /////
 router.post("/pro",isLoggedIn,upload.single("img"),createProductpage);
 
-router.post('/create/orderId', async function(req,res){
-  const user = await userModel.findOne({
-    username: req.session.passport.user,
-  })
-  var options = {
-    amount: user.SUM,  // amount in the smallest currency unit
-    currency: "INR",
-    receipt: "order_rcptid_11"
-  };
-  instance.orders.create(options, function(err, order) {
-    console.log(order);
-    return res.send(order)
 
-  });
-})
+
+router.post('/create/orderId', createOrderId)
 router.post("/api/payment/verify",(req,res)=>{
 
   let body=req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
