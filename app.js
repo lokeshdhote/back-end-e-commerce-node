@@ -15,9 +15,9 @@ const { generatedErrors } = require("./middleWares/errors.js");
 // Database connection
 require("./models/dataBase.js").connectDatabse();
 
-const allowedOrigins =["http://localhost:5173"]
 
-// const allowedOrigins =["https://first-react-pro.onrender.com/"]
+
+const allowedOrigins =["https://first-react-pro.onrender.com/"]
 
 
 
