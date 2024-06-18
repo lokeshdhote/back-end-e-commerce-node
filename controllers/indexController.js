@@ -7,6 +7,13 @@ const ErrorHandler = require("../utils/ErrorHandler.js");
 exports.indexpage = catchAsyncErrors(async (req, res, next) => {
     res.render("index");
 });
+exports.LoginUser = catchAsyncErrors(async (req, res, next) => {
+   const LogedUser = await userModel.findOne({
+    username: req.session.passport.user,
+  })
+  
+  res.send(LogedUser)
+});
 
 
 exports.homepage = catchAsyncErrors(async (req, res, next) => {
@@ -105,9 +112,10 @@ exports.postproductpage = catchAsyncErrors(async (req,res,next)=>{
   res.render("postProduct.ejs", ); 
 })
 exports.likeProductid = catchAsyncErrors(async (req,res,next)=>{
-    const loggedInUser = await userModel.findOne({
-        username: req.session.passport.user,
-      });
+    const loggedInUser = req.body
+    // await userModel.findOne({
+    //   username: req.session.passport.user,
+    // });
     
       const product = await productModel.findOne({ _id: req.params.productId });
     
@@ -119,14 +127,10 @@ exports.likeProductid = catchAsyncErrors(async (req,res,next)=>{
       }
     
       await loggedInUser.save();
-      const user = await userModel
-        .findOne({
-          username: req.session.passport.user,
-        })
-        .populate("wishlist");
+ const user = await userModel.findOne({username: req.session.passport.user}).populate("wishlist");
     
-      // res.status(200).json(user)
-      res.redirect("/home");
+      res.status(200).json(user)
+      // res.redirect("/home");
 })
 exports.productpage = catchAsyncErrors(async (req,res,next)=>{
   const product = await productModel.find({});

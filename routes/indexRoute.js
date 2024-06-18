@@ -7,10 +7,13 @@ const upload = require("./multer");
 const passport = require("passport");
 const localStrategy = require("passport-local");
 const product = require("../models/product");
+const jwt=require("jsonwebtoken")
+const bcrypt=require("bcrypt");
+const cookieparser=require("cookie-parser")
 
 
 
-const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage, createOrderId } = require("../controllers/indexController.js");
+const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage, createOrderId, LoginUser } = require("../controllers/indexController.js");
 
 
 var instance = new Razorpay({
@@ -24,13 +27,20 @@ passport.use(new localStrategy(userModel.authenticate()));
 router.get("/", indexpage);
 router.get("/products", productpage);
 
-
+router.get("/LoginUser",isLoggedIn,LoginUser)
 router.get("/home",isLoggedIn ,homepage);
 
 router.get("/detail/:id", detailpage );
 
 
-router.get("/likes/:productId", isLoggedIn,likeProductid);
+router.get("/like/:productId", isLoggedIn,likeProductid);
+
+router.get("/wishlist", isLoggedIn, Wishlistpage);
+
+router.get("/likes/remove/:wishId",isLoggedIn,removeLikeid);
+
+router.get("/profile", isLoggedIn,profilepage );
+
 
 router.get("/postproduct", isLoggedIn, postproductpage);
 
@@ -142,11 +152,52 @@ router.get(
   }
 );
 
-router.get("/wishlist", isLoggedIn, Wishlistpage);
+router.post("/register",async(req,res,next)=>{
+  const user = await new userModel(req.body).save()
+res.status(201).json(user)
+  
 
-router.get("/likes/remove/:wishId",isLoggedIn,removeLikeid);
+});
 
-router.get("/profile", isLoggedIn,profilepage );
+router.post("/login", async (req, res, next) => {
+ 
+  const { username, password } = req.body;
+  let user = await userModel.findOne({ username:username }).select("+password").exec()
+          if(!user){
+            return next(new ErrorHandler("User with this email if not found",404) )
+          }
+          const isMatch =  user.comparepassword(req.body.password)
+          if(!isMatch){
+             return next(new ErrorHandler("Wrong crendentials",404))
+          }
+          // console.log(req.body);
+          // sendtoken(user,200,res)
+  
+          res.status(200).json(user) 
+  })
+    
+function isLoggedIn() {
+  return (req, res, next) => {
+    let token = req.cookies.token;
+    if (token) {
+      jwt.verify(token, "key", (err, result) => {
+        if (result) {
+          next();
+        } else {
+          res.redirect("/login");
+        }
+      });
+    } else {
+      res.redirect("/login");
+    }
+  };
+}
+router.get("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.send("you are logged out");
+});
+
+
 
 // router.post(
 //   "/prouploads",
@@ -164,45 +215,49 @@ router.get("/profile", isLoggedIn,profilepage );
 //   }
 // );
 
-router.post("/register", function (req, res, next) {
-  var userdata = new userModel({
-    username: req.body.username,
-    email: req.body.email,
-    category: req.body.category,
-    secret: req.body.secret,
-    adress:req.body.adress
-  });
+// router.post("/register", function (req, res, next) {
+//   console.log(req.params);
+//   console.log(req.body);
+//   var userdata = new userModel({
+//     username: req.body.username,
+//     email: req.body.email,
+//     category: req.body.category,
+//     secret: req.body.secret,
+//     adress:req.body.adress
+//   });
 
-  userModel
-    .register(userdata, req.body.password)
-    .then(function (registereduser) {
-      passport.authenticate("local")(req, res, function () {
-        res.redirect("/home");
-      });
-    });
-});
+//   userModel
+//     .register(userdata, req.body.password)
+//     .then(function (registereduser) {
+//       passport.authenticate("local")(req, res, function () {
+//         res.redirect("/home");
+//       });
+//     });
+// });
 
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/home",
-    failureRedirect: "/",
-  }),
-  function (req, res) {}
-);
+// router.post("/login",passport.authenticate("local", 
+//   {
+//     successRedirect: "/home",
+//     failureRedirect: "/",
+//   }),
+//   function (req, res) {
+// console.log(req.body.formData);
 
-router.get("/logout", function (req, res, next) {
-  req.logout(function (err) {
-    if (err) return next(err);
-    res.redirect("/");
-  });
-});
+//   }
+// );
 
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/");
-}
+// router.get("/logout", function (req, res, next) {
+//   req.logout(function (err) {
+//     if (err) return next(err);
+//     res.redirect("/");
+//   });
+// });
+
+// function isLoggedIn(req, res, next) {
+//   if (req.isAuthenticated()) {
+//     return next();
+//   }
+//   res.redirect("/");
+// }
 
 module.exports = router;
