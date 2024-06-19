@@ -8,9 +8,7 @@ exports.indexpage = catchAsyncErrors(async (req, res, next) => {
     res.render("index");
 });
 exports.LoginUser = catchAsyncErrors(async (req, res, next) => {
-   const LogedUser = await userModel.findOne({
-    username: req.session.passport.user,
-  })
+   const LogedUser = await userModel.findById(req.id).exec()
   
   res.send(LogedUser)
 });
@@ -134,6 +132,7 @@ exports.likeProductid = catchAsyncErrors(async (req,res,next)=>{
 })
 exports.productpage = catchAsyncErrors(async (req,res,next)=>{
   const product = await productModel.find({});
+  
     res.json(product)
 })
 exports.createOrderId = catchAsyncErrors(async (req,res,next)=>{

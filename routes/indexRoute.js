@@ -14,6 +14,8 @@ const cookieparser=require("cookie-parser")
 
 
 const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage, createOrderId, LoginUser } = require("../controllers/indexController.js");
+const ErrorHandler = require("../utils/ErrorHandler.js");
+const { token } = require("morgan");
 
 
 var instance = new Razorpay({
@@ -28,6 +30,7 @@ router.get("/", indexpage);
 router.get("/products", productpage);
 
 router.get("/LoginUser",isLoggedIn,LoginUser)
+
 router.get("/home",isLoggedIn ,homepage);
 
 router.get("/detail/:id", detailpage );
@@ -154,6 +157,8 @@ router.get(
 
 router.post("/register",async(req,res,next)=>{
   const user = await new userModel(req.body).save()
+  let token= jwt.sign({email:req.body.email},"piyush")
+  res.cookie("token",token)
 res.status(201).json(user)
   
 
@@ -161,39 +166,66 @@ res.status(201).json(user)
 
 router.post("/login", async (req, res, next) => {
  
-  const { username, password } = req.body;
-  let user = await userModel.findOne({ username:username }).select("+password").exec()
-          if(!user){
-            return next(new ErrorHandler("User with this email if not found",404) )
-          }
-          const isMatch =  user.comparepassword(req.body.password)
-          if(!isMatch){
-             return next(new ErrorHandler("Wrong crendentials",404))
-          }
-          // console.log(req.body);
-          // sendtoken(user,200,res)
+  const{email,password}=req.body;
+
+  const user =await userModel.findOne({email});
   
-          res.status(200).json(user) 
+  if(!user){
+      return res.send("invalid credentials")
+  }
+  bcrypt.compare(password,user.password,(err,result)=>{
+      if(err){
+          return res.send("invalid credential")
+      }
+      const token=jwt.sign({ email:req.body.email},"piyush")
+      res.cookie("token",token)
+      res.send(result)
   })
-    
+
+  // const { username, password } = req.body;
+  // let user = await userModel.findOne({ email:req.body.email })
+
+  //         if(!user){
+  //           return next(new ErrorHandler("User with this email if not found",404) )
+  //         }
+  //         const isMatch =  user.comparepassword(password,req.body.password)
+  //         if(!isMatch){
+  //            return next(new ErrorHandler("Wrong crendentials",404))
+  //         }
+  //         // console.log(req.body);
+  //         // sendtoken(user,200,res)
+  
+  //         res.status(200).json(user) 
+  })
+
 function isLoggedIn() {
   return (req, res, next) => {
-    let token = req.cookies.token;
-    if (token) {
-      jwt.verify(token, "key", (err, result) => {
-        if (result) {
-          next();
-        } else {
-          res.redirect("/login");
-        }
-      });
-    } else {
-      res.redirect("/login");
-    }
-  };
+
+
+    const {token} = req.cookies;
+    if(!token) return next(new ErrorHandler("please login to access the resource",401));
+    const {id} = jwt.verify(token,"piyush" )
+    req.id = id;
+     // res.json({id,token})
+     next();
+
+  //   let token = req.cookies.token;
+  //   if (token) {
+  //    jwt.verify(token, "piyush", (err, result) => {
+  //       if (result) {
+  //         next();
+  //       } else {
+  //         res.redirect("/login");
+  //       }
+  //     });
+   
+  //   } else {
+  //     res.redirect("/login");
+  //   }
+};
 }
-router.get("/logout", (req, res) => {
-  res.clearCookie("token");
+router.get("/logout", async (req, res) => {
+  res.clearCookie("token"); 
   res.send("you are logged out");
 });
 
