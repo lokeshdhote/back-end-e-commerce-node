@@ -18,7 +18,7 @@ require("./models/dataBase.js").connectDatabse();
 
 
 // const allowedOrigins =["http://localhost:5173"]
-const allowedOrigins =["https://first-react-pro.onrender.com/","http://localhost:5173"]
+const allowedOrigins =["https://first-react-pro.onrender.com","http://localhost:5173"]
 
 
 
