@@ -10,12 +10,12 @@ const product = require("../models/product");
 const jwt=require("jsonwebtoken")
 const bcrypt=require("bcrypt");
 const cookieparser=require("cookie-parser")
-
+const {isLoggedIn} = require("../middleWares/auth.js")
 
 
 const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage, createOrderId, LoginUser } = require("../controllers/indexController.js");
 const ErrorHandler = require("../utils/ErrorHandler.js");
-const { token } = require("morgan");
+// const { token } = require("morgan");
 
 
 var instance = new Razorpay({
@@ -166,21 +166,60 @@ res.status(201).json(user)
 
 router.post("/login", async (req, res, next) => {
  
+ try {
   const{email,password}=req.body;
 
   const user =await userModel.findOne({email});
   
   if(!user){
-      return res.send("invalid credentials")
+   res.status(401).json({
+        message:"invalid credentials"
+      })
+      return;
   }
   bcrypt.compare(password,user.password,(err,result)=>{
       if(err){
-          return res.send("invalid credential")
+        res.status(401).json({
+          message:"invalid credentials"
+        })
+        return;
       }
-      const token=jwt.sign({ email:req.body.email},"piyush")
+      const token=jwt.sign({ email:req.body.email,user:user.id},"piyush")
       res.cookie("token",token)
-      res.send(result)
+    
+      res.send(user)
   })
+ } catch (error) {
+  console.log('====================================');
+  console.log(error);
+  console.log('====================================');
+  res.status(401).json({error})
+ }
+
+
+  })
+  router.get("/logout", async (req, res) => {
+    res.clearCookie("token"); 
+    res.send("you are logged out");
+  });
+
+  
+//   function isLoggedIn() {
+//     return (req, res, next) => {
+  
+  
+//       const token = req.cookies;
+//       if(!token) return next(new ErrorHandler("please login to access the resource",401));
+//       const id = jwt.verify(token,"piyush" )
+//       req.id = id;
+//        // res.json({id,token})
+//        next();
+//     }
+//   }
+
+
+
+
 
   // const { username, password } = req.body;
   // let user = await userModel.findOne({ email:req.body.email })
@@ -196,19 +235,7 @@ router.post("/login", async (req, res, next) => {
   //         // sendtoken(user,200,res)
   
   //         res.status(200).json(user) 
-  })
-
-function isLoggedIn() {
-  return (req, res, next) => {
-
-
-    const {token} = req.cookies;
-    if(!token) return next(new ErrorHandler("please login to access the resource",401));
-    const {id} = jwt.verify(token,"piyush" )
-    req.id = id;
-     // res.json({id,token})
-     next();
-
+     //  res.json({id,token})
   //   let token = req.cookies.token;
   //   if (token) {
   //    jwt.verify(token, "piyush", (err, result) => {
@@ -222,12 +249,6 @@ function isLoggedIn() {
   //   } else {
   //     res.redirect("/login");
   //   }
-};
-}
-router.get("/logout", async (req, res) => {
-  res.clearCookie("token"); 
-  res.send("you are logged out");
-});
 
 
 

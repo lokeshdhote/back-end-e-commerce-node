@@ -1,12 +1,17 @@
 const  mongoose = require("mongoose")
 const bcrypt = require("bcrypt")
 const plm = require("passport-local-mongoose")
+const { type } = require("os")
 
 
 
 const userSchema = mongoose.Schema({
     username:String,
-    email:String,
+    email:{
+      type:String,
+      unique: true,
+      required:[true,"Email is required"],
+    },
     password :{
       type:String
     },

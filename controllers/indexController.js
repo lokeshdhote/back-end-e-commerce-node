@@ -8,16 +8,17 @@ exports.indexpage = catchAsyncErrors(async (req, res, next) => {
     res.render("index");
 });
 exports.LoginUser = catchAsyncErrors(async (req, res, next) => {
+ 
    const LogedUser = await userModel.findById(req.id).exec()
-  
+   console.log('====================================');
+   console.log(LogedUser);
+   console.log('====================================');
   res.send(LogedUser)
 });
 
 
 exports.homepage = catchAsyncErrors(async (req, res, next) => {
-    const user = await userModel.findOne({
-        username: req.session.passport.user,
-      });
+    const user = await userModel.findById(req.id).exec()
     
       const product = await productModel.find({});
     // res.json({product,user})
@@ -33,23 +34,21 @@ const data = await productModel.findOne({_id:req.params.id})
 });
 
 exports.createProductpage = catchAsyncErrors(async (req, res, next) => {
-    const user = await userModel.findOne({
-        username: req.session.passport.user,
-      })
+    const user = await userModel.findById(req.id).exec();
    
-  
-      const product = await productModel.create({
-        price: req.body.price,
-        title: req.body.title,
-        rating : req.body.rating,
-        categoryGender:req.body.categoryGender,
-        brand : req.body.brand,
-        description : req.body.description,
-        specification : req.body.specification,
-        availability : req.body.availability,
-        category : req.body.category,
-        img: req.body.img
-      });
+  const product = await new productModel(req.body).save()
+      // const product = await productModel.create({
+      //   price: req.body.price,
+      //   title: req.body.title,
+      //   rating : req.body.rating,
+      //   categoryGender:req.body.categoryGender,
+      //   brand : req.body.brand,
+      //   description : req.body.description,
+      //   specification : req.body.specification,
+      //   availability : req.body.availability,
+      //   category : req.body.category,
+      //   img: req.body.img
+      // });
       product.user = user._id;
       user.product.push(product._id);
   
@@ -59,9 +58,7 @@ exports.createProductpage = catchAsyncErrors(async (req, res, next) => {
       res.redirect("/home");
 });
 exports.bookpage = catchAsyncErrors(async (req,res,next)=>{
-    const user = await userModel.findOne({
-        username: req.session.passport.user,
-      }).populate({
+    const user = await userModel.findById(req.id).exec().populate({
         path: "cart.pro",
         
       })
@@ -71,9 +68,7 @@ exports.bookpage = catchAsyncErrors(async (req,res,next)=>{
       res.render("book.ejs",)
 })
 exports.Wishlistpage = catchAsyncErrors(async (req,res,next)=>{
-    const user = await userModel.findOne({
-        username: req.session.passport.user,
-      }).populate("wishlist");
+    const  user = await userModel.findById(req.id).exec().populate("wishlist");
     const product = await productModel.find({});
 //   res.json({user,product })
     res.render("wishlist.ejs", {user,product });
@@ -81,9 +76,7 @@ exports.Wishlistpage = catchAsyncErrors(async (req,res,next)=>{
 exports.removeLikeid = catchAsyncErrors(async (req,res,next)=>{
     // res.send(req.params.wishId)
 
-    const loggedInUser = await userModel.findOne({
-        username: req.session.passport.user,
-      });
+    const loggedInUser = await userModel.findById(req.id).exec()
   
       const product = await productModel.findOne({ _id: req.params.wishId });
   
@@ -96,9 +89,7 @@ exports.removeLikeid = catchAsyncErrors(async (req,res,next)=>{
     
 })
 exports.profilepage = catchAsyncErrors(async (req,res,next)=>{
-    const user = await userModel.findOne({
-        username: req.session.passport.user,
-      });
+    const user = await userModel.findById(req.id).exec()
     // res.json({user})
       res.render("profile.ejs", { user });
 })
@@ -110,7 +101,7 @@ exports.postproductpage = catchAsyncErrors(async (req,res,next)=>{
   res.render("postProduct.ejs", ); 
 })
 exports.likeProductid = catchAsyncErrors(async (req,res,next)=>{
-    const loggedInUser = req.body
+    const loggedInUser = await userModel.findById(req.id).exec()
     // await userModel.findOne({
     //   username: req.session.passport.user,
     // });
@@ -125,7 +116,7 @@ exports.likeProductid = catchAsyncErrors(async (req,res,next)=>{
       }
     
       await loggedInUser.save();
- const user = await userModel.findOne({username: req.session.passport.user}).populate("wishlist");
+ const user = await userModel.findById(req.id).exec().populate("wishlist");
     
       res.status(200).json(user)
       // res.redirect("/home");
@@ -136,9 +127,7 @@ exports.productpage = catchAsyncErrors(async (req,res,next)=>{
     res.json(product)
 })
 exports.createOrderId = catchAsyncErrors(async (req,res,next)=>{
-  const user = await userModel.findOne({
-    username: req.session.passport.user,
-  })
+  const user = await userModel.findById(req.id).exec()
   var options = {
     amount: user.SUM,  // amount in the smallest currency unit
     currency: "INR",
