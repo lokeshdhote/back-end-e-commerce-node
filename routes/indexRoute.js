@@ -13,8 +13,9 @@ const cookieparser=require("cookie-parser")
 const {isLoggedIn} = require("../middleWares/auth.js")
 
 
-const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage, createOrderId, LoginUser } = require("../controllers/indexController.js");
+const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage, createOrderId, LoginUser, cartAdd, removeItem, addMoreItem } = require("../controllers/indexController.js");
 const ErrorHandler = require("../utils/ErrorHandler.js");
+const { log } = require("console");
 // const { token } = require("morgan");
 
 
@@ -50,110 +51,77 @@ router.get("/postproduct", isLoggedIn, postproductpage);
 ////// product create /////
 router.post("/pro",isLoggedIn,createProductpage);
 
-
-
-router.post('/create/orderId', createOrderId)
-router.post("/api/payment/verify",(req,res)=>{
-
-  let body=req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
- 
-   var crypto = require("crypto");
-   var expectedSignature = crypto.createHmac('sha256', process.env.key_Secret)
-                                   .update(body.toString())
-                                   .digest('hex');
-                                   console.log("sig received " ,req.body.response.razorpay_signature);
-                                   console.log("sig generated " ,expectedSignature);
-   var response = {"signatureIsValid":"false"}
-   if(expectedSignature === req.body.response.razorpay_signature)
-    response={"signatureIsValid":"true"}
-       res.send(response);
-   });
- 
-router.get("/success",function(req,res){
-  res.render("success")
-})
-router.get("/fail",function(req,res){
-  res.render("fail")
-})
 router.get("/book",isLoggedIn , bookpage)
-router.get("/cart", isLoggedIn, async function (req, res, next) {
-  
-  const user = await userModel.findOne({
-      username: req.session.passport.user,
-    }).populate({
-      path: "cart.pro",
-      
-    });
-    // user.populate("cart")
+
+// router.post('/create/orderId', createOrderId)
+
+
+
+// router.post("/api/payment/verify",(req,res)=>{
+
+//   let body=req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
+ 
+//    var crypto = require("crypto");
+//    var expectedSignature = crypto.createHmac('sha256', process.env.key_Secret)
+//                                    .update(body.toString())
+//                                    .digest('hex');
+//                                    console.log("sig received " ,req.body.response.razorpay_signature);
+//                                    console.log("sig generated " ,expectedSignature);
+//    var response = {"signatureIsValid":"false"}
+//    if(expectedSignature === req.body.response.razorpay_signature)
+//     response={"signatureIsValid":"true"}
+//        res.send(response);
+//    });
+ 
+// router.get("/success",function(req,res){
+//   res.render("success")
+// })
+// router.get("/fail",function(req,res){
+//   res.render("fail")
+// })
+ // user.populate("cart")
   // console.log(user.cart.pro)
-  const product = await productModel.find({});
-  var sum = 0;
-  user.cart.forEach((i)=>{
-     console.log(i)
-    sum += i.pro.price*i.quantity;
-  })
-  // res.send(user,sum)
-user.SUM=sum*100
-await user.save();
-  res.render("cart.ejs", { user, product,sum });
-});
-
-
-router.get("/cart/add/:id", isLoggedIn, async function (req, res, next) {
-  const user = await userModel.findOne({
-    username: req.session.passport.user,
+  router.get("/cart", isLoggedIn, async function (req, res, next) {
+    try {
+      // Fetch the user by ID and populate the cart products
+      const user = await userModel.findById(req.id).populate("cart.pro").exec();
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+  
+      // Initialize the sum variable
+      let sum = 0;
+  
+      // Calculate the total sum of the cart items
+      user.cart.forEach((item) => {
+        // Ensure price and quantity are numbers to avoid type issues
+        sum += Number(item.pro.price) * Number(item.quantity);
+      });
+  
+      // Update the SUM field with the calculated sum multiplied by 100
+      user.SUM = sum ;
+  
+      // Save the updated user document
+      await user.save();
+  
+      // Return the updated user object
+      res.json(user);
+  
+    } catch (error) {
+      console.error(error);
+      next(error); // Pass the error to the next middleware (error handler)
+    }
   });
+  
+router.get("/cart/add/:id", isLoggedIn, cartAdd );
 
-  const product = await productModel.findOne({ _id: req.params.id });
 
-  const info = {
-    pro: product._id,
-    quantity: 1,
-  };
-  user.cart.push(info);
 
-  await user.save();
+router.get("/cart/remove/:id", isLoggedIn, removeItem );
 
-  res.redirect("/cart");
-});
 
-router.get("/cart/remove/:cartId", isLoggedIn, async function (req, res, next) {
-  const user = await userModel.findOne({
-    username: req.session.passport.user,
-  });
 
-  const product = user.cart.findIndex(
-    (i) => i._id.toString() === req.params.cartId
-  );
-  if (user.cart[product].quantity === 1) {
-    const remove = user.cart.filter(
-      (i) => i._id.toString() !== req.params.cartId
-    );
-    user.cart = remove;
-    await user.save();
-  } else {
-    user.cart[product].quantity--;
-    await user.save();
-  }
-  res.redirect("/cart");
-});
-
-router.get(
-  "/cart/addMore/:cartId",
-  isLoggedIn,
-  async function (req, res, next) {
-    const user = await userModel.findOne({
-      username: req.session.passport.user,
-    });
-
-    const product = user.cart.findIndex(
-      (i) => i._id.toString() === req.params.cartId
-    );
-    user.cart[product].quantity++;
-    await user.save();
-    res.redirect("/cart");
-  }
-);
+router.get("/cart/addMore/:id",isLoggedIn,addMoreItem );
 
 router.post("/register",async(req,res,next)=>{
   const user = await new userModel(req.body).save()
