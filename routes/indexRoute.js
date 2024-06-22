@@ -33,10 +33,10 @@ router.get("/LoginUser",isLoggedIn,LoginUser)
 
 router.get("/home",isLoggedIn ,homepage);
 
-router.get("/detail/:id", detailpage );
+router.get("/detail/:id", isLoggedIn,detailpage );
 
 
-router.get("/like/:productId", isLoggedIn,likeProductid);
+router.get("/like/:id", isLoggedIn,likeProductid);
 
 router.get("/wishlist", isLoggedIn, Wishlistpage);
 

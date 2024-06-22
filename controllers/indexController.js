@@ -68,12 +68,14 @@ exports.bookpage = catchAsyncErrors(async (req,res,next)=>{
       res.render("book.ejs",)
 })
 exports.Wishlistpage = catchAsyncErrors(async (req,res,next)=>{
-    const  user = await userModel.findById(req.id).exec().populate("wishlist");
+    const  user = await userModel.findById(req.id).populate("wishlist").exec()
+    console.log(user);
     const product = await productModel.find({});
-//   res.json({user,product })
-    res.render("wishlist.ejs", {user,product });
+  res.json(user)
+console.log(user);
+    // res.render("wishlist.ejs", {user,product });
 })
-exports.removeLikeid = catchAsyncErrors(async (req,res,next)=>{
+exports. removeLikeid = catchAsyncErrors(async (req,res,next)=>{
     // res.send(req.params.wishId)
 
     const loggedInUser = await userModel.findById(req.id).exec()
@@ -102,11 +104,9 @@ exports.postproductpage = catchAsyncErrors(async (req,res,next)=>{
 })
 exports.likeProductid = catchAsyncErrors(async (req,res,next)=>{
     const loggedInUser = await userModel.findById(req.id).exec()
-    // await userModel.findOne({
-    //   username: req.session.passport.user,
-    // });
+
     
-      const product = await productModel.findOne({ _id: req.params.productId });
+      const product = await productModel.findOne({ _id: req.params.id });
     
       if (loggedInUser.wishlist.indexOf(product._id) === -1) {
         loggedInUser.wishlist.push(product._id);
@@ -116,10 +116,11 @@ exports.likeProductid = catchAsyncErrors(async (req,res,next)=>{
       }
     
       await loggedInUser.save();
- const user = await userModel.findById(req.id).exec().populate("wishlist");
-    
-      res.status(200).json(user)
-      // res.redirect("/home");
+ const user = await userModel.findById(req.id).populate("wishlist").exec()
+
+    // console.log(user);
+      res.json(user)
+
 })
 exports.productpage = catchAsyncErrors(async (req,res,next)=>{
   const product = await productModel.find({});
