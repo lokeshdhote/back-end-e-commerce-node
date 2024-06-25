@@ -18,6 +18,7 @@ const userSchema = mongoose.Schema({
     category:String,
     secret:String,
     adress:String,
+    phoneNumber:Number,
     like:{
         type:Array,
         default:[],

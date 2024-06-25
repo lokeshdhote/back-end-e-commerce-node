@@ -13,7 +13,7 @@ const cookieparser=require("cookie-parser")
 const {isLoggedIn} = require("../middleWares/auth.js")
 
 
-const { indexpage, homepage, detailpage, createProductpage, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage, createOrderId, LoginUser, cartAdd, removeItem, addMoreItem } = require("../controllers/indexController.js");
+const { indexpage, homepage, detailpage, createProductpage,searchSection, bookpage, Wishlistpage, removeLikeid, profilepage, postproductpage, likeProductid, productpage, createOrderId, LoginUser, cartAdd, removeItem, addMoreItem } = require("../controllers/indexController.js");
 const ErrorHandler = require("../utils/ErrorHandler.js");
 const { log } = require("console");
 // const { token } = require("morgan");
@@ -33,6 +33,7 @@ router.get("/products", productpage);
 router.get("/LoginUser",isLoggedIn,LoginUser)
 
 router.get("/home",isLoggedIn ,homepage);
+router.post("/search",isLoggedIn ,searchSection);
 
 router.get("/detail/:id", isLoggedIn,detailpage );
 
@@ -124,6 +125,7 @@ router.get("/cart/remove/:id", isLoggedIn, removeItem );
 router.get("/cart/addMore/:id",isLoggedIn,addMoreItem );
 
 router.post("/register",async(req,res,next)=>{
+  console.log(req.body);
   const user = await new userModel(req.body).save()
   let token= jwt.sign({email:req.body.email},"piyush")
   res.cookie("token",token)

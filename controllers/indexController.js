@@ -25,6 +25,29 @@ exports.homepage = catchAsyncErrors(async (req, res, next) => {
     res.render("home",{product,user})
 });
 
+exports.searchSection = catchAsyncErrors(async (req, res, next) => {
+  console.log(req.body);
+  const user = await userModel.findById(req.id).exec()
+    
+  const product = await productModel.find({});
+
+  const query = req.body.search ? req.body.search.toLowerCase() : '';
+
+  if (!query) {
+      return res.json(product); // Return all data if no query is provided
+  }
+  
+  const results = product.filter(item =>
+      item.title.toLowerCase().includes(query) ||
+      item.category.toLowerCase().includes(query) || 
+      item.brand.toLowerCase().includes(query)
+  );
+  
+  
+  res.json(results);
+
+});
+
 
 exports.detailpage = catchAsyncErrors(async (req, res, next) => {
   // console.log(req.params.id)
